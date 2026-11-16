@@ -1,0 +1,176 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  html {
+    @apply bg-void text-warm antialiased;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+
+  body {
+    @apply font-sans bg-void text-warm overflow-x-hidden;
+    font-feature-settings: 'ss01', 'cv11';
+  }
+
+  ::selection { @apply bg-lime text-void; }
+
+  :focus-visible {
+    outline: 2px solid #b9f56b;
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+}
+
+@layer components {
+  .container-dv {
+    @apply mx-auto w-full max-w-[1600px] px-5 sm:px-6 md:px-10 xl:px-16;
+  }
+  .label {
+    @apply font-mono text-label uppercase;
+  }
+  .glass {
+    background: linear-gradient(180deg, rgba(32, 37, 42, 0.62), rgba(23, 27, 30, 0.5));
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    backdrop-filter: blur(18px) saturate(150%);
+    box-shadow: inset 0 1px 0 rgba(233, 237, 229, 0.08), 0 20px 50px -20px rgba(0, 0, 0, 0.7);
+  }
+  .grain::after {
+    content: '';
+    position: fixed;
+    inset: -50%;
+    z-index: 100;
+    pointer-events: none;
+    background-image: var(--grain);
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+  }
+}
+
+/*
+ * Pre-hydration hidden states for the hero entrance.
+ * `.motion-ok` is set by an inline script in <head> only when JS runs AND the visitor
+ * has not asked for reduced motion — so content is never hidden for no-JS / reduced-motion users.
+ */
+/* Hero entrance — CSS only, so it starts at first paint (no wait for JavaScript). */
+.motion-ok [data-hero-eyebrow] { animation: heroFade 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both; }
+.motion-ok [data-hero-word] {
+  animation: heroWord 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(0.15s + var(--i, 0) * 40ms);
+}
+.motion-ok [data-hero-fade] {
+  animation: heroFade 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(0.45s + var(--i, 0) * 80ms);
+}
+.motion-ok [data-hero-media] { animation: heroMask 1.4s cubic-bezier(0.87, 0, 0.13, 1) 0.05s both; }
+.motion-ok [data-hero-media-inner] { animation: heroSettle 1.9s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both; }
+/* Phones: show the hero copy immediately (fast first view / LCP); desktop keeps the full entrance. */
+@media (max-width: 767px) {
+  .motion-ok [data-hero-word],
+  .motion-ok [data-hero-fade],
+  .motion-ok [data-hero-eyebrow] { animation: none; }
+}
+@keyframes heroWord { from { transform: translate3d(0, 110%, 0) rotate(4deg); } to { transform: none; } }
+@keyframes heroFade { from { opacity: 0; transform: translate3d(0, 16px, 0); } to { opacity: 1; transform: none; } }
+@keyframes heroMask { from { clip-path: inset(100% 0% 0% 0% round 28px); } to { clip-path: inset(0% 0% 0% 0% round 28px); } }
+@keyframes heroSettle { from { transform: scale(1.25); } to { transform: none; } }
+
+/* Section 03 — pre-scroll states (only when motion is allowed) */
+.motion-ok .phil-word { color: rgba(233, 237, 229, 0.3); }
+.motion-ok .phil-pre { opacity: 0; }
+
+/* Section 04 — pre-scroll states */
+.motion-ok .work-pre { opacity: 0; }
+.motion-ok [data-work-word] { transform: translate3d(0, 110%, 0); }
+.motion-ok [data-work-mask] { clip-path: inset(100% 0% 0% 0%); }
+.motion-ok [data-work-meta] { opacity: 0; }
+
+/* Section 05 — pre-scroll states */
+.motion-ok .svc-pre { opacity: 0; }
+.motion-ok [data-svc-word] { transform: translate3d(0, 110%, 0); }
+
+/* Section 05 — service glyph loops */
+.svc-spin { transform-box: view-box; transform-origin: 200px 120px; animation: svcSpin 6s linear infinite; }
+.svc-pulse { transform-box: fill-box; transform-origin: center; animation: svcPulse 2.4s ease-in-out infinite; }
+.svc-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: svcDraw 3.2s cubic-bezier(0.65, 0, 0.35, 1) infinite; }
+.svc-cursor { offset-rotate: 0deg; animation: svcCursor 3.2s cubic-bezier(0.65, 0, 0.35, 1) infinite; }
+.svc-tile { fill-opacity: 0.06; animation: svcTile 3.6s ease-in-out infinite; }
+.svc-scan { animation: svcScan 4.5s cubic-bezier(0.65, 0, 0.35, 1) infinite; }
+.svc-swatch { transform-box: fill-box; transform-origin: center; animation: svcPop 3.2s ease-in-out infinite; }
+
+@keyframes svcSpin { to { transform: rotate(360deg); } }
+@keyframes svcPulse { 0%, 100% { transform: scale(0.7); opacity: 0.5; } 50% { transform: scale(1.25); opacity: 1; } }
+@keyframes svcDraw { 0% { stroke-dashoffset: 1; } 55%, 80% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -1; } }
+@keyframes svcCursor { 0% { offset-distance: 0%; opacity: 0; } 10% { opacity: 1; } 60%, 85% { offset-distance: 100%; opacity: 1; } 100% { offset-distance: 100%; opacity: 0; } }
+@keyframes svcTile { 0%, 100% { fill-opacity: 0.06; } 40%, 55% { fill-opacity: 0.85; } }
+@keyframes svcScan { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(196px); } }
+@keyframes svcPop { 0%, 100% { transform: scale(1); } 30% { transform: scale(1.15); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .svc-spin, .svc-pulse, .svc-draw, .svc-cursor, .svc-tile, .svc-scan, .svc-swatch { animation: none; }
+  .svc-draw { stroke-dashoffset: 0; }
+  .svc-tile { fill-opacity: 0.4; }
+  .svc-cursor { offset-distance: 100%; }
+}
+
+/* Sections 07–09 — shared pre-scroll states */
+.motion-ok .sh-pre,
+.motion-ok [data-reveal],
+.motion-ok [data-reveal-group] > * { opacity: 0; }
+.motion-ok [data-sh-word] { transform: translate3d(0, 110%, 0); }
+.motion-ok .about-mask { clip-path: inset(100% 0% 0% 0% round 28px); }
+
+/* ── Logo ─────────────────────────────────────────── */
+.logo-deep { animation: logoIn 0.7.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both; }
+.logo-vibe {
+  transform-box: fill-box;
+  transform-origin: 15% 85%;
+  animation: vibePop 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.45s both, vibeNod 2.4s ease-in-out 1.6s infinite;
+}
+.logo:hover .logo-vibe { animation: vibeNod 0.6s ease-in-out infinite; }
+@keyframes logoIn { from { opacity: 0; transform: translateY(18%); } to { opacity: 1; transform: none; } }
+@keyframes vibePop { from { opacity: 0; transform: scale(0.4) rotate(-18deg); } to { opacity: 1; transform: none; } }
+@keyframes vibeNod {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  25% { transform: rotate(-3.5deg) translateY(-3%); }
+  50% { transform: rotate(0deg) translateY(0); }
+  75% { transform: rotate(2.5deg) translateY(-1.5%); }
+}
+
+/* ── Vibe toggle (equaliser) ──────────────────────── */
+.eq-bar { height: 100%; transform: scaleY(0.35); animation: eqIdle 2.4s ease-in-out infinite; }
+.eq-on .eq-bar { animation: eqBeat 0.5s ease-in-out infinite; }
+@keyframes eqIdle { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(0.7); } }
+@keyframes eqBeat { 0%, 100% { transform: scaleY(0.25); } 30% { transform: scaleY(1); } 60% { transform: scaleY(0.55); } }
+
+/* ── Vibe mode (html.vibe-on) — driven by the music ──
+   --beat (swell 0..1) and --level (loudness 0..1) are set every frame by lib/vibeAudio.ts */
+.eq-on .eq-bar { animation: none; }
+.vibe-on .logo-vibe {
+  animation: none;
+  /* ambient: float and tilt with the swell rather than bounce */
+  transform: translateY(calc((var(--beat, 0) - 0.35) * -14%)) rotate(calc((var(--beat, 0) - 0.35) * -9deg))
+    scale(calc(1 + var(--level, 0) * 0.05));
+}
+.vibe-on [data-vibe-glow] { opacity: calc(0.1 + var(--level, 0) * 1.4); }
+
+/* label swap in the founder frame */
+.vibe-show { display: none; }
+.vibe-on .vibe-show { display: inline-flex; }
+.vibe-on .vibe-hide { display: none; }
+
+.dz-np-bar { height: 100%; transform: scaleY(calc(0.2 + var(--level, 0) * var(--m))); transition: transform 80ms linear; }
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-deep, .logo-vibe, .eq-bar, .vibe-on [data-vibe-glow], .vibe-on [data-vibe-frame], .vibe-on .logo-vibe { animation: none !important; }
+  .eq-bar { transform: scaleY(0.6); }
+  .vibe-on .logo-vibe { transform: none !important; }
+}
