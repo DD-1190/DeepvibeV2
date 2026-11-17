@@ -2,11 +2,14 @@ import { createHash } from 'node:crypto';
 import { NextResponse } from 'next/server';
 import type { ProjectData } from '@/lib/chat/types';
 import { validateEnquiry } from '@/lib/chat/validate';
+import { enquiryText } from '@/lib/chat/whatsapp';
+import { site } from '@/data/site';
 import { clientIp, rateLimit, sameOrigin } from '@/lib/server/rateLimit';
 
 /**
  * POST /api/contact/submit — delivers a confirmed enquiry. Never fakes success and stores nothing.
- * Destinations (first configured wins, all are tried for CONTACT_WEBHOOK_URL):
+ * Destinations — every configured one is tried; success if at least one accepts it:
+ *   CALLMEBOT_API_KEY (+ WHATSAPP_NOTIFY_NUMBER)              → WhatsApp message to Naman via CallMeBot
  *   RESEND_API_KEY + CONTACT_TO_EMAIL (+ CONTACT_FROM_EMAIL)  → email via Resend
  *   FORMSPREE_ENDPOINT                                          → Formspree form
  *   CONTACT_WEBHOOK_URL                                         → JSON POST (CRM, Zapier, Make, Slack…)
@@ -22,9 +25,8 @@ function rows(d: ProjectData): [string, string][] {
   const budget = d.budget ? (/\d/.test(d.budget) && !/[₹$]/.test(d.budget) ? `${d.budget} (${d.currency})` : d.budget) : 'Not shared';
   return [
     ['Name', d.name],
-    ['Email', d.email],
-    ['Company', d.company || '—'],
-    ['Website', d.website || '—'],
+    ['WhatsApp', d.phone],
+    ['Email', d.email || '—'],
     ['Project type', d.project_type || '—'],
     ['Project', d.project_description || '—'],
     ['Support needed', d.services_required.join(', ') || '—'],
@@ -35,11 +37,22 @@ function rows(d: ProjectData): [string, string][] {
 }
 
 async function deliver(d: ProjectData, ref: string): Promise<'sent' | 'failed' | 'none'> {
-  const subject = `New project enquiry — ${d.name}${d.company ? ` (${d.company})` : ''} · ${ref}`;
+  const subject = `New project enquiry — ${d.name} · ${d.phone} · ${ref}`;
   const table = rows(d);
   const text = table.map(([k, v]) => `${k}: ${v}`).join('\n');
   let attempted = false;
   let ok = false;
+
+  // WhatsApp → Naman (CallMeBot: free, for notifying your own number — see README)
+  if (process.env.CALLMEBOT_API_KEY) {
+    attempted = true;
+    const to = '+' + (process.env.WHATSAPP_NOTIFY_NUMBER || site.whatsapp).replace(/\D/g, '');
+    const url = `https://api.callmebot.com/whatsapp.php?phone=${encodeURIComponent(to)}&text=${encodeURIComponent(enquiryText(d, ref))}&apikey=${encodeURIComponent(process.env.CALLMEBOT_API_KEY)}`;
+    const res = await fetch(url, { cache: 'no-store' }).catch(() => null);
+    const body = res ? await res.text().catch(() => '') : '';
+    if (res?.ok && !/error|invalid|not (allowed|activated)/i.test(body)) ok = true;
+    else console.error('[contact/submit] CallMeBot failed', res?.status, body.replace(/<[^>]+>/g, ' ').slice(0, 200));
+  }
 
   if (process.env.RESEND_API_KEY && process.env.CONTACT_TO_EMAIL) {
     attempted = true;
@@ -52,7 +65,7 @@ async function deliver(d: ProjectData, ref: string): Promise<'sent' | 'failed' |
       body: JSON.stringify({
         from: process.env.CONTACT_FROM_EMAIL || 'DeepVibe <onboarding@resend.dev>',
         to: process.env.CONTACT_TO_EMAIL.split(',').map((s) => s.trim()),
-        reply_to: d.email,
+        ...(d.email ? { reply_to: d.email } : {}),
         subject,
         text,
         html,
@@ -62,12 +75,12 @@ async function deliver(d: ProjectData, ref: string): Promise<'sent' | 'failed' |
     else console.error('[contact/submit] Resend failed', res?.status, res ? (await res.text()).slice(0, 300) : '');
   }
 
-  if (!ok && process.env.FORMSPREE_ENDPOINT) {
+  if (process.env.FORMSPREE_ENDPOINT) {
     attempted = true;
     const res = await fetch(process.env.FORMSPREE_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ _subject: subject, _replyto: d.email, ...Object.fromEntries(table), reference: ref }),
+      body: JSON.stringify({ _subject: subject, ...(d.email ? { _replyto: d.email } : {}), ...Object.fromEntries(table), reference: ref }),
     }).catch(() => null);
     if (res?.ok) ok = true;
     else console.error('[contact/submit] Formspree failed', res?.status);
@@ -109,7 +122,7 @@ export async function POST(req: Request) {
   if (!rateLimit(`submit:${ip}`, 5, 10 * 60_000)) return NextResponse.json({ error: 'rate_limited' }, { status: 429 });
 
   const hash = createHash('sha256')
-    .update(JSON.stringify([String(body.sessionId ?? ''), d.email.toLowerCase(), d.project_description, d.project_type]))
+    .update(JSON.stringify([String(body.sessionId ?? ''), d.phone, d.project_description, d.project_type]))
     .digest('hex');
   const ref = 'DV-' + hash.slice(0, 6).toUpperCase();
   const seen = recent.get(hash);

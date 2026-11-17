@@ -65,7 +65,7 @@ with sync_playwright() as p:
     rec('Marquee actually drags', tx1-tx0>120 or tx1<tx0-200, f'{round(tx0)} → {round(tx1)}')
     # assistant: chips hover, composer keeps native I-beam, clicks pass through
     x,y=hover(pg,'#contact button[data-open-chat="Something else"]'); rec('Starter chip → hover', st(pg)=='hover', st(pg))
-    pg.click('#contact button[data-open-chat="Something else"]'); pg.wait_for_selector('#chat-input'); pg.wait_for_timeout(2600)
+    pg.click('#contact button[data-open-chat=""]'); pg.wait_for_selector('#chat-input'); pg.wait_for_timeout(2600)
     rec('Clicks pass through the cursor (chat opened)', pg.locator('[role=dialog]').count()==1)
     x,y=hover(pg,'#chat-input')
     rec('Chat composer → native I-beam, custom hidden', st(pg)=='text' and pg.evaluate("getComputedStyle(document.querySelector('#chat-input')).cursor")=='text', st(pg))

@@ -8,6 +8,8 @@ export type NavItem = { label: string; href: string };
 export type SocialLink = { label: string; href: string };
 
 export const site = {
+  /** WhatsApp number that receives project enquiries (country code, digits only). */
+  whatsapp: '919873470074',
   name: 'DeepVibe',
   url: 'https://deepvibe.in',
   tagline: 'We design what comes next.',

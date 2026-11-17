@@ -5,16 +5,34 @@ export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 export type FieldErrors = Partial<Record<keyof ProjectData, string>>;
 
-export function validateContact(d: Pick<ProjectData, 'name' | 'email' | 'website'>): FieldErrors {
+/** "98734 70074" → "+919873470074"; keeps an explicit country code. Returns '' if it can't be a phone number. */
+export function normalizePhone(raw: string): string {
+  const t = raw.trim();
+  let digits = t.replace(/\D/g, '');
+  if (!t.startsWith('+') && digits.startsWith('00')) digits = digits.slice(2);
+  else if (!t.startsWith('+') && digits.length === 11 && digits.startsWith('0')) digits = '91' + digits.slice(1);
+  else if (!t.startsWith('+') && digits.length === 10) digits = '91' + digits; // Indian mobile without code
+  return digits.length >= 8 && digits.length <= 15 ? '+' + digits : '';
+}
+
+/** "+919876543210" → "+91 98765 43210" for display. */
+export function formatPhone(p: string): string {
+  const m = /^\+91(\d{5})(\d{5})$/.exec(p);
+  return m ? `+91 ${m[1]} ${m[2]}` : p;
+}
+
+export function validateContact(d: Pick<ProjectData, 'name' | 'phone' | 'email' | 'website'>): FieldErrors {
   const e: FieldErrors = {};
   if (d.name.trim().length < 2) e.name = 'Please share your name.';
-  if (!EMAIL_RE.test(d.email.trim())) e.email = 'Please enter a valid email address.';
+  if (!normalizePhone(d.phone)) e.phone = 'Please enter a valid WhatsApp number (with country code if outside India).';
+  if (d.email.trim() && !EMAIL_RE.test(d.email.trim())) e.email = 'That email doesn’t look right.';
   if (d.website.trim() && !/^(https?:\/\/)?[\w-]+(\.[\w-]+)+(\S*)$/i.test(d.website.trim())) e.website = 'That doesn’t look like a web address.';
   return e;
 }
 
 const LIMITS: Partial<Record<keyof ProjectData, number>> = {
   name: 100,
+  phone: 24,
   email: 160,
   company: 120,
   website: 200,
@@ -32,6 +50,7 @@ export function validateEnquiry(input: unknown): { ok: true; data: ProjectData }
   const str = (k: keyof ProjectData) => (typeof r[k] === 'string' ? (r[k] as string).trim() : '');
   const data: ProjectData = {
     name: str('name'),
+    phone: normalizePhone(str('phone')) || str('phone'),
     email: str('email'),
     company: str('company'),
     website: str('website'),

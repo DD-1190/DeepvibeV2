@@ -4,6 +4,7 @@ export type Currency = 'INR' | 'USD';
 
 export type ProjectData = {
   name: string;
+  phone: string;
   email: string;
   company: string;
   website: string;
@@ -18,6 +19,7 @@ export type ProjectData = {
 
 export const EMPTY_PROJECT: ProjectData = {
   name: '',
+  phone: '',
   email: '',
   company: '',
   website: '',

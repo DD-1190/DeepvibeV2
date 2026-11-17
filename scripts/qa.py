@@ -67,14 +67,14 @@ with sync_playwright() as p:
     pg.click('header [data-open-chat]'); pg.wait_for_selector('[role=dialog]'); pg.wait_for_timeout(2200)
     bx=pg.locator('[role=dialog]').bounding_box(); vw=pg.viewport_size
     rec('Assistant','Opens docked bottom-right', abs(bx['x']+bx['width']-(vw['width']-24))<3 and abs(bx['y']+bx['height']-(vw['height']-24))<3, str(bx))
-    pg.click('[role=dialog] button:has-text("A new digital product")'); pg.wait_for_timeout(3200)
     ta=pg.locator('#chat-input'); ta.fill('a'); ta.press('Shift+Enter'); nl='\n' in ta.input_value()
-    ta.fill('Just an idea'); ta.press('Enter'); pg.wait_for_timeout(3200)
-    rec('Assistant','Enter sends, Shift+Enter adds a line', nl and pg.locator('.chat-bubble-user').count()==2)
+    ta.fill('A booking app for yoga studios'); ta.press('Enter'); pg.wait_for_timeout(3200)
+    rec('Assistant','Enter sends, Shift+Enter adds a line', nl and pg.locator('.chat-bubble-user').count()==1)
+    rec('Assistant','Then asks for name + WhatsApp', pg.locator('#cd-name').count()==1 and pg.locator('#cd-phone').count()==1)
     pg.keyboard.press('Escape'); pg.wait_for_timeout(600)
     closed=pg.locator('[role=dialog]').count()==0
     pg.click('button[aria-label="Continue your project conversation"]'); pg.wait_for_timeout(900)
-    rec('Assistant','Esc closes and conversation is restored on reopen', closed and pg.locator('.chat-bubble-user').count()==2)
+    rec('Assistant','Esc closes and conversation is restored on reopen', closed and pg.locator('.chat-bubble-user').count()==1)
     pg.click('[aria-label="Close chat"]'); pg.wait_for_timeout(600)
     # vibe toggle
     pg.evaluate('scrollTo(0,0)'); pg.wait_for_timeout(500)

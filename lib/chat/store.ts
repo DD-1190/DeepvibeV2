@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from 'react';
 import { BUDGET_EXTRA, OPENING, PROJECT_TYPES, applyAnswer, defaultCurrency, followupFor, nextStep, questionFor } from './flow';
+import { formatPhone } from './validate';
 import { EMPTY_PROJECT, STEPS, type ChatApiResponse, type ChatMessage, type Currency, type ProjectData, type Step } from './types';
 
 /**
@@ -10,7 +11,7 @@ import { EMPTY_PROJECT, STEPS, type ChatApiResponse, type ChatMessage, type Curr
  * survives closing/reopening and page reloads in the same tab, and is gone when the tab closes.
  */
 
-export type SubmitState = { status: 'idle' | 'sending' | 'sent' | 'error'; message?: string; reference?: string };
+export type SubmitState = { status: 'idle' | 'sending' | 'sent' | 'handoff' | 'error'; message?: string; reference?: string };
 
 export type ChatState = {
   open: boolean;
@@ -219,9 +220,9 @@ export async function send(raw: string) {
 }
 
 /** Contact form completed. */
-export async function submitContactDetails(details: Pick<ProjectData, 'name' | 'email' | 'company' | 'website'>) {
+export async function submitContactDetails(details: Pick<ProjectData, 'name' | 'phone' | 'email' | 'additional_notes'>) {
   const data = { ...state.data, ...details };
-  set({ data, messages: [...state.messages, msg('user', `${details.name} · ${details.email}`)] });
+  set({ data, messages: [...state.messages, msg('user', `${details.name} · ${formatPhone(details.phone)}`)] });
   await say(questionFor('summary', data).text, 'summary', [], 400);
 }
 
@@ -241,18 +242,15 @@ export async function submitEnquiry(honeypot = '') {
     if (res.ok && json.ok) return succeed(json.reference);
     if (!isJson || res.status === 404 || res.status === 405 || (res.status === 503 && json.error === 'not_configured')) {
       if (await viaWeb3Forms()) return succeed();
-      return fail(
-        process.env.NODE_ENV === 'development'
-          ? 'Submissions aren’t connected yet (no email/CRM configured). Nothing was sent — see README → Project assistant.'
-          : 'Our enquiry inbox isn’t connected yet, so nothing was sent. Please try again soon.',
-      );
+      // no automatic delivery configured → hand over to WhatsApp click-to-chat (the visitor presses send)
+      return set({ submit: { status: 'handoff' } });
     }
     if (res.status === 429) return fail('Too many attempts — please wait a few minutes and try again.');
     if (res.status === 400 && json.errors) return fail(Object.values(json.errors)[0] ?? 'Please check your details.');
     return fail('Something went wrong sending your enquiry. Please try again.');
   } catch {
     if (await viaWeb3Forms()) return succeed();
-    return fail('We couldn’t reach the server. Check your connection and try again.');
+    return set({ submit: { status: 'handoff' } });
   }
 }
 
@@ -266,9 +264,9 @@ async function viaWeb3Forms(): Promise<boolean> {
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify({
         access_key: key,
-        subject: `New project enquiry — ${d.name}${d.company ? ` (${d.company})` : ''}`,
+        subject: `New project enquiry — ${d.name} · WhatsApp ${d.phone}`,
         from_name: 'DeepVibe project assistant',
-        replyto: d.email,
+        ...(d.email ? { replyto: d.email } : {}),
         ...d,
         services_required: d.services_required.join(', '),
         budget: d.budget ? `${d.budget}${/[₹$]/.test(d.budget) ? '' : ` (${d.currency})`}` : 'Not shared',
@@ -283,8 +281,14 @@ async function viaWeb3Forms(): Promise<boolean> {
 async function succeed(reference?: string) {
   set({ submit: { status: 'sent', reference } });
   const first = state.data.name.split(' ')[0];
+  await say(`Thank you${first ? `, ${first}` : ''}. Naman has your details and will message you on WhatsApp at ${formatPhone(state.data.phone)}.`, 'done', [], 300);
+}
+
+/** Visitor opened WhatsApp with the pre-typed message. We can't see whether they pressed send, so we say so. */
+export async function confirmHandoff() {
+  const first = state.data.name.split(' ')[0];
   await say(
-    `Thank you${first ? `, ${first}` : ''}. Your enquiry is with Naman — he'll reply to ${state.data.email} personally.`,
+    `WhatsApp should be open with your message ready${first ? `, ${first}` : ''} — just press send and Naman will reply there. If it didn't open, use the button again.`,
     'done',
     [],
     300,

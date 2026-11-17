@@ -6,6 +6,7 @@ import { Check, MessageCircle } from 'lucide-react';
 import { BUDGETS, BUDGET_EXTRA, SERVICES } from '@/lib/chat/flow';
 import {
   closeChat,
+  confirmHandoff,
   openChat,
   restartChat,
   send,
@@ -16,6 +17,7 @@ import {
   useChat,
 } from '@/lib/chat/store';
 import type { Currency } from '@/lib/chat/types';
+import { whatsappLink } from '@/lib/chat/whatsapp';
 import { cn } from '@/lib/cn';
 import { ChatHeader } from './ChatHeader';
 import { ChatInput } from './ChatInput';
@@ -200,9 +202,20 @@ export function ContactChatModal() {
 
                   {s.step === 'contact' && (
                     <ContactDetailsForm
-                      initial={{ name: s.data.name, email: s.data.email, company: s.data.company, website: s.data.website }}
+                      initial={{ name: s.data.name, phone: s.data.phone, email: s.data.email, additional_notes: s.data.additional_notes }}
                       onSubmit={(d) => void submitContactDetails(d)}
                     />
+                  )}
+
+                  {s.step === 'done' && s.submit.status === 'handoff' && (
+                    <div className="ml-[36px] flex flex-wrap gap-2">
+                      <a href={whatsappLink(s.data)} target="_blank" rel="noopener noreferrer" className="chat-chip">
+                        Open WhatsApp again ↗
+                      </a>
+                      <button type="button" onClick={close} className="chat-chip">
+                        Back to site
+                      </button>
+                    </div>
                   )}
 
                   {s.step === 'done' && s.submit.status === 'sent' && (
@@ -211,7 +224,7 @@ export function ContactChatModal() {
                         <Check size={17} strokeWidth={2.5} />
                       </span>
                       <div className="min-w-0 flex-1">
-                        <p className="font-display text-[0.9375rem] font-medium text-warm">Enquiry sent</p>
+                        <p className="font-display text-[0.9375rem] font-medium text-warm">Sent to Naman</p>
                         {s.submit.reference && <p className="label mt-0.5 text-[0.5625rem] text-muted">Reference {s.submit.reference}</p>}
                       </div>
                       <button type="button" onClick={close} className="chat-chip !py-2 !text-[0.75rem]">
@@ -221,7 +234,7 @@ export function ContactChatModal() {
                   )}
 
                   {s.step === 'summary' && (
-                    <ProjectSummary data={s.data} submit={s.submit} onChange={updateData} onSubmit={(hp) => void submitEnquiry(hp)} />
+                    <ProjectSummary data={s.data} submit={s.submit} onChange={updateData} onSubmit={(hp) => void submitEnquiry(hp)} onHandoff={() => void confirmHandoff()} />
                   )}
                 </div>
               )}

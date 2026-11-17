@@ -96,8 +96,8 @@ export function applyAnswer(step: Step, text: string, d: ProjectData): ProjectDa
     case 'project_type': {
       const exact = PROJECT_TYPES.find((p) => p.toLowerCase() === v.toLowerCase());
       next.project_type = exact ?? matchProjectType(v) ?? 'Something else';
-      // a detailed free-text answer doubles as the description
-      if (!exact && v.length >= 40) next.project_description = v;
+      // their own words are kept as the brief
+      if (!exact) next.project_description = v;
       break;
     }
     case 'followup': {
@@ -126,7 +126,9 @@ export function applyAnswer(step: Step, text: string, d: ProjectData): ProjectDa
 
 /** Decide the next step from what we already know (skips anything already answered). */
 export function nextStep(from: Step, d: ProjectData, followupDone: boolean): Step {
-  const order: Step[] = ['project_type', 'followup', 'description', 'services', 'budget', 'timeline', 'contact', 'summary'];
+  // Short by design: one question about the project, then contact details. (The longer steps remain
+  // supported by the engine — add them back to this list to ask them.)
+  const order: Step[] = ['project_type', 'contact', 'summary'];
   const start = from === 'budget_custom' ? order.indexOf('budget') + 1 : order.indexOf(from) + 1;
   for (const s of order.slice(Math.max(0, start))) {
     if (s === 'followup' && (followupDone || !followupFor(d))) continue;
@@ -134,7 +136,7 @@ export function nextStep(from: Step, d: ProjectData, followupDone: boolean): Ste
     if (s === 'services' && d.services_required.length) continue;
     if (s === 'budget' && d.budget) continue;
     if (s === 'timeline' && d.timeline) continue;
-    if (s === 'contact' && d.name && d.email) continue;
+    if (s === 'contact' && d.name && d.phone) continue;
     return s;
   }
   return 'summary';
@@ -162,9 +164,9 @@ export function questionFor(step: Step, d: ProjectData, isFirstAck = true): { te
     case 'timeline':
       return { text: `${a}When are you looking to start?`, chips: TIMELINES };
     case 'contact':
-      return { text: `${a}Where can Naman reach you?`, chips: [] };
+      return { text: `${a}Where can Naman reach you? Leave your name and WhatsApp number and he'll message you personally.`, chips: [] };
     case 'summary':
-      return { text: "Here's what I've captured. Have a quick look, edit anything, then send it over.", chips: [] };
+      return { text: "Here's what I'll send to Naman. Edit anything, then send it over.", chips: [] };
     default:
       return { text: 'What are you looking to build?', chips: PROJECT_TYPES };
   }

@@ -72,7 +72,7 @@ export function Contact() {
             <div className="relative mt-8 flex items-end gap-2.5">
               <VibeMark size={26} />
               <p className="chat-bubble-ai max-w-[34rem] rounded-[20px] rounded-bl-md px-4 py-3 text-[0.9375rem] leading-[1.55] text-warm/95 md:text-base">
-                Hey, welcome to DeepVibe. Tell me what you&apos;re building and I&apos;ll help shape the brief — it takes about two minutes.
+                Hey, welcome to DeepVibe. Tell me what you&apos;re building and Naman will reach out to you personally on WhatsApp — it takes 20 seconds.
                 <br />
                 <span className="mt-2 block text-warm">What are you looking to build?</span>
               </p>

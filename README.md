@@ -72,13 +72,14 @@ no sideways scroll at 320–1920 px, mobile menu (open / Esc / focus return) and
 ## Project assistant (AI contact chat)
 
 Every "Let's talk" / "Start a project" CTA opens a glass chat docked bottom-right (full-screen on phones).
-It asks one thing at a time — project type → a smart follow-up → the idea → support needed → budget
-(optional, ₹/$) → timeline → contact details — then shows an editable summary. **Nothing is sent until the
-visitor presses "Submit project enquiry".** The conversation lives in `sessionStorage` only (survives
-minimising and reloads in that tab, gone when the tab closes). Nothing is stored on the server.
+It's deliberately short: **one question** ("What are you looking to build?" — tap a chip or type a line),
+then **name + WhatsApp number** (email and a note optional), then a quick editable confirm. **Nothing is sent
+until the visitor presses "Send to Naman".** The conversation lives in `sessionStorage` only. Nothing is stored
+on the server. The WhatsApp number that receives enquiries is `site.whatsapp` in `data/site.ts`.
 
 Any element with `data-open-chat` opens it (`data-open-chat="An AI-powered experience"` pre-answers the
-first question; `data-chat-note="…"` adds a note). `<MagneticButton openChat>` sets it for you.
+first question; `data-chat-note="…"` adds a note). `<MagneticButton openChat>` sets it for you. The longer
+brief (services, budget, timeline…) is still in the engine — add the steps back in `nextStep()` in `lib/chat/flow.ts`.
 
 ```
 components/chat/   ContactChatModal, ChatHeader, ChatMessage, QuickReplyChips, ChatInput,
@@ -87,24 +88,33 @@ lib/chat/          flow.ts (questions, chips, budgets, skip logic), store.ts (st
 app/api/contact/   chat/route.ts (OpenAI Responses API), submit/route.ts (delivery)
 ```
 
-**Turn on the AI (optional)** — Vercel → Settings → Environment Variables → `OPENAI_API_KEY` (and optionally
-`OPENAI_MODEL`, default `gpt-5-mini`). Redeploy. The model only phrases questions and pulls details out of
-free text; it is told never to quote prices, timelines, clients or guarantees. Without a key — or if OpenAI
-is slow/down — the same conversation runs from the built-in script, so the chat never breaks.
+**WhatsApp delivery (recommended)** — enquiries arrive on your WhatsApp automatically via CallMeBot (free,
+made for notifying your own number):
+1. Open https://www.callmebot.com/blog/free-api-whatsapp-messages/ and save the bot number shown there in your
+   phone's contacts (it changes from time to time, so always take it from that page).
+2. From the WhatsApp on 98734 70074, send it: `I allow callmebot to send me messages`
+3. It replies with your **apikey** (if not within 2 minutes, try again after 24 h). In Vercel → Settings →
+   Environment Variables add `CALLMEBOT_API_KEY=<apikey>`, redeploy.
 
-**Connect delivery (required to receive enquiries)** — add at least one, then redeploy:
-- *Email (Resend)*: `RESEND_API_KEY`, `CONTACT_TO_EMAIL` (your inbox), `CONTACT_FROM_EMAIL` (an address on a
-  domain verified in Resend). The visitor's email is the reply-to — just hit Reply.
-- *Formspree*: `FORMSPREE_ENDPOINT`.
-- *CRM / Zapier / Make / Slack*: `CONTACT_WEBHOOK_URL` — gets the structured JSON (name, email, company,
-  website, project_type, project_description, services_required[], budget, currency, timeline, additional_notes).
+CallMeBot's free tier is meant for personal notifications and is best-effort; for guaranteed delivery at
+volume use the official WhatsApp Business (Cloud) API or Twilio behind `CONTACT_WEBHOOK_URL`.
 
-The submit route validates everything, rate-limits (5 per 10 min per IP), rejects bots (honeypot, link spam,
-cross-site posts) and ignores double submits. If nothing is configured the visitor is told plainly that the
-enquiry was **not** sent. `.env.local` is gitignored — never commit keys.
+Until that's set, the final button opens WhatsApp with the enquiry already typed out to your number, so the
+visitor just presses send — the chat says exactly that, and never claims it was delivered.
 
-`npm run build:static` builds have no `/api`: the chat runs scripted, and submissions work only if
-`NEXT_PUBLIC_WEB3FORMS_KEY` is set.
+**Also / instead (optional)** — `RESEND_API_KEY` + `CONTACT_TO_EMAIL` + `CONTACT_FROM_EMAIL` for email,
+`FORMSPREE_ENDPOINT`, or `CONTACT_WEBHOOK_URL` for a CRM/Zapier (structured JSON). Every configured destination is used.
+
+**AI (optional)** — `OPENAI_API_KEY` (and optionally `OPENAI_MODEL`, default `gpt-5-mini`) lets the assistant
+reply naturally to whatever the visitor types. It is told never to quote prices, timelines, clients or
+guarantees. Without a key the same conversation runs from the built-in script.
+
+The submit route validates everything (phone normalised, +91 assumed for 10-digit numbers), rate-limits
+(5 per 10 min per IP), rejects bots (honeypot, link spam, cross-site posts) and ignores double submits.
+`.env.local` is gitignored — never commit keys.
+
+`npm run build:static` builds have no `/api`: the chat runs scripted, and submissions use the WhatsApp
+click-to-chat button (or `NEXT_PUBLIC_WEB3FORMS_KEY` if set).
 
 ## Still to fill in
 

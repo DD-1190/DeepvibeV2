@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import { ArrowUpRight, Check, Loader2, Pencil, RotateCw } from 'lucide-react';
 import { SERVICES } from '@/lib/chat/flow';
+import { whatsappLink } from '@/lib/chat/whatsapp';
 import type { ProjectData } from '@/lib/chat/types';
 import type { SubmitState } from '@/lib/chat/store';
-import { validateContact } from '@/lib/chat/validate';
+import { formatPhone, validateContact } from '@/lib/chat/validate';
 import { cn } from '@/lib/cn';
 
 type Props = {
@@ -13,33 +14,32 @@ type Props = {
   submit: SubmitState;
   onChange: (patch: Partial<ProjectData>) => void;
   onSubmit: (honeypot: string) => void;
+  onHandoff: () => void;
 };
 
 type Row = { k: keyof ProjectData; label: string; multiline?: boolean; optional?: boolean };
 const ROWS: Row[] = [
-  { k: 'project_type', label: 'Project' },
-  { k: 'project_description', label: 'The idea', multiline: true },
-  { k: 'services_required', label: 'Support needed' },
-  { k: 'budget', label: 'Budget', optional: true },
-  { k: 'timeline', label: 'Timeline', optional: true },
-  { k: 'additional_notes', label: 'Notes', multiline: true, optional: true },
+  { k: 'project_type', label: 'Looking to build' },
+  { k: 'project_description', label: 'In your words', multiline: true, optional: true },
   { k: 'name', label: 'Name' },
-  { k: 'email', label: 'Email' },
-  { k: 'company', label: 'Company', optional: true },
-  { k: 'website', label: 'Website', optional: true },
+  { k: 'phone', label: 'WhatsApp' },
+  { k: 'email', label: 'Email', optional: true },
+  { k: 'additional_notes', label: 'Note', multiline: true, optional: true },
 ];
 
 /** "We've got the idea." — editable recap. Nothing is sent until the visitor presses submit. */
-export function ProjectSummary({ data, submit, onChange, onSubmit }: Props) {
+export function ProjectSummary({ data, submit, onChange, onSubmit, onHandoff }: Props) {
   const [editing, setEditing] = useState<keyof ProjectData | null>(null);
   const [hp, setHp] = useState('');
-  const locked = submit.status === 'sending' || submit.status === 'sent';
+  const locked = submit.status === 'sending' || submit.status === 'sent' || submit.status === 'handoff';
   const contactErrors = validateContact(data);
+  const handoff = submit.status === 'handoff';
   const invalid = Object.keys(contactErrors).length > 0 || (!data.project_type && !data.project_description);
 
   const display = (r: Row) => {
     const v = data[r.k];
     if (r.k === 'services_required') return (v as string[]).join(', ');
+    if (r.k === 'phone') return formatPhone(v as string);
     if (r.k === 'budget' && v && /\d/.test(v as string) && !/[₹$]/.test(v as string)) return `${v} (${data.currency})`;
     return v as string;
   };
@@ -58,7 +58,7 @@ export function ProjectSummary({ data, submit, onChange, onSubmit }: Props) {
           const value = display(r);
           if (!value && r.optional && editing !== r.k) return null;
           const isEditing = editing === r.k;
-          const err = (r.k === 'name' || r.k === 'email' || r.k === 'website') && contactErrors[r.k];
+          const err = (r.k === 'name' || r.k === 'phone' || r.k === 'email') && contactErrors[r.k];
           return (
             <div key={r.k} className="group/row px-5 py-3">
               <div className="flex items-center justify-between gap-3">
@@ -111,7 +111,7 @@ export function ProjectSummary({ data, submit, onChange, onSubmit }: Props) {
                   <input
                     autoFocus
                     aria-label={r.label}
-                    type={r.k === 'email' ? 'email' : 'text'}
+                    type={r.k === 'email' ? 'email' : r.k === 'phone' ? 'tel' : 'text'}
                     value={data[r.k] as string}
                     onChange={(e) => onChange({ [r.k]: e.target.value })}
                     onKeyDown={(e) => e.key === 'Enter' && setEditing(null)}
@@ -139,9 +139,24 @@ export function ProjectSummary({ data, submit, onChange, onSubmit }: Props) {
             {submit.message}
           </p>
         )}
-        {submit.status === 'sent' ? (
+        {handoff ? (
+          <>
+            <p className="mb-3 text-[0.8125rem] leading-relaxed text-warm/85">
+              One last tap: WhatsApp opens with your message ready — just press send.
+            </p>
+            <a
+              href={whatsappLink(data)}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={onHandoff}
+              className="chat-primary h-12 w-full text-[0.78rem]"
+            >
+              Send on WhatsApp <ArrowUpRight size={16} />
+            </a>
+          </>
+        ) : submit.status === 'sent' ? (
           <p role="status" className="flex items-center justify-center gap-2 rounded-full border border-lime/30 bg-lime/[0.08] py-3 text-[0.8125rem] text-lime">
-            <Check size={15} /> Enquiry sent{submit.reference ? ` · Ref ${submit.reference}` : ''}
+            <Check size={15} /> Sent to Naman{submit.reference ? ` · Ref ${submit.reference}` : ''}
           </p>
         ) : (
           <button
@@ -160,13 +175,13 @@ export function ProjectSummary({ data, submit, onChange, onSubmit }: Props) {
               </>
             ) : (
               <>
-                Submit project enquiry <ArrowUpRight size={16} />
+                Send to Naman <ArrowUpRight size={16} />
               </>
             )}
           </button>
         )}
         {submit.status !== 'sent' && (
-          <p className="mt-2.5 text-center text-[0.6875rem] text-muted/80">Goes straight to Naman. No mailing lists.</p>
+          <p className="mt-2.5 text-center text-[0.6875rem] text-muted/80">Goes straight to Naman on WhatsApp. No mailing lists.</p>
         )}
       </div>
     </section>
