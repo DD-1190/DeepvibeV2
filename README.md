@@ -14,7 +14,7 @@ Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS 3 · GSAP + Sc
 npm install
 npm run dev          # http://localhost:3000
 npm run build && npm start
-STATIC_EXPORT=1 npm run build   # fully static site in /out, for your own server (nginx, Apache, any CDN)
+npm run build:static     # fully static site in /out, for your own server (nginx, Apache, any CDN)
 ```
 
 > Use TypeScript 5.x. Next 15 can't use the TypeScript 7 native compiler.
@@ -84,7 +84,7 @@ first question; `data-chat-note="…"` adds a note). `<MagneticButton openChat>`
 components/chat/   ContactChatModal, ChatHeader, ChatMessage, QuickReplyChips, ChatInput,
                    ContactDetailsForm, ProjectSummary, TypingIndicator, VibeMark
 lib/chat/          flow.ts (questions, chips, budgets, skip logic), store.ts (state), validate.ts, types.ts
-app/api/contact/   chat/route.api.ts (OpenAI Responses API), submit/route.api.ts (delivery)
+app/api/contact/   chat/route.ts (OpenAI Responses API), submit/route.ts (delivery)
 ```
 
 **Turn on the AI (optional)** — Vercel → Settings → Environment Variables → `OPENAI_API_KEY` (and optionally
@@ -103,7 +103,7 @@ The submit route validates everything, rate-limits (5 per 10 min per IP), reject
 cross-site posts) and ignores double submits. If nothing is configured the visitor is told plainly that the
 enquiry was **not** sent. `.env.local` is gitignored — never commit keys.
 
-`STATIC_EXPORT=1` builds have no `/api`: the chat runs scripted, and submissions work only if
+`npm run build:static` builds have no `/api`: the chat runs scripted, and submissions work only if
 `NEXT_PUBLIC_WEB3FORMS_KEY` is set.
 
 ## Still to fill in

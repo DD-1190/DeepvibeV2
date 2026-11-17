@@ -1,0 +1,16 @@
+# dependencies
+node_modules
+
+# build output
+.next
+out
+*.tsbuildinfo
+next-env.d.ts
+
+# secrets — never commit your form key
+.env*.local
+.env
+
+# misc
+.DS_Store
+.vercel
