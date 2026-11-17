@@ -302,10 +302,4 @@ export const contact = {
   highlight: ['ambitious'],
   sub: "Let's turn your next big idea into something meaningful.",
   cta: "Let's talk about your project",
-  projectTypes: ['Product strategy', 'Experience design', 'Design systems', 'Brand & digital experiences', 'Not sure yet'],
-  /** Budget ranges per currency — edit to match how you price. Visitors can switch; India defaults to INR. */
-  budgets: {
-    USD: ['Under $10k', '$10k – $25k', '$25k – $50k', '$50k+', 'Not sure yet'],
-    INR: ['Under ₹8L', '₹8L – ₹20L', '₹20L – ₹40L', '₹40L+', 'Not sure yet'],
-  } as Record<'USD' | 'INR', string[]>,
 };

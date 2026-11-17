@@ -161,7 +161,7 @@ export function Services() {
                             ))}
                           </ul>
                           <div className="mt-10">
-                            <MagneticButton href={services.cta.href} size="sm">
+                            <MagneticButton href={services.cta.href} size="sm" openChat>
                               {services.cta.label}
                             </MagneticButton>
                           </div>

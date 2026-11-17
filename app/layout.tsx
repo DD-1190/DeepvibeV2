@@ -5,6 +5,8 @@ import '@fontsource/ibm-plex-mono/400.css';
 import '@fontsource/ibm-plex-mono/500.css';
 import './globals.css';
 import { site } from '@/data/site';
+import { ContactChatModal } from '@/components/chat/ContactChatModal';
+import { CustomCursor } from '@/components/cursor/CustomCursor';
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -65,6 +67,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         {children}
+        <CustomCursor />
+        <ContactChatModal />
       </body>
     </html>
   );

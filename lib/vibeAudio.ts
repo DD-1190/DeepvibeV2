@@ -65,9 +65,8 @@ function frame(t: number) {
     slow = slow * 0.99 + level * 0.01;
     const target = Math.min(1, Math.max(0, (level - slow) * 6 + 0.35));
     swell = swell * 0.92 + target * 0.08;
-    raw = [avg(data, 1, 4), avg(data, 5, 14), avg(data, 15, 50) * 1.1, avg(data, 51, 130) * 1.4, avg(data, 131, 280) * 1.9].map(
-      (v) => Math.pow(v, 1.8) * 1.2,
-    );
+    // raw band energies (0..1, unclamped shape); the equaliser normalises each band itself
+    raw = [avg(data, 1, 3), avg(data, 4, 10), avg(data, 11, 28), avg(data, 29, 70), avg(data, 71, 160)];
   } else {
     // simulated slow breathing (~8 s cycle) if audio can't start
     const s = (Math.sin((t / 1000) * 0.8) + 1) / 2;
@@ -76,10 +75,9 @@ function frame(t: number) {
     raw = [0, 1, 2, 3, 4].map((i) => 0.25 + 0.35 * ((Math.sin(t / (700 + i * 230) + i) + 1) / 2));
   }
 
-  bandsSmooth = bandsSmooth.map((b, i) => b * 0.7 + raw[i] * 0.3);
+  bandsSmooth = bandsSmooth.map((b, i) => b * 0.55 + raw[i] * 0.45);
   setVars(swell, level);
-  const clamped = bandsSmooth.map((v) => Math.min(1, Math.max(0.1, v)));
-  listeners.forEach((fn) => fn(clamped));
+  listeners.forEach((fn) => fn(bandsSmooth));
   raf = requestAnimationFrame(frame);
 }
 
@@ -118,7 +116,7 @@ export async function startVibe() {
       ctx = new AC();
       analyser = ctx.createAnalyser();
       analyser.fftSize = 1024;
-      analyser.smoothingTimeConstant = 0.6;
+      analyser.smoothingTimeConstant = 0.45;
       gain = ctx.createGain();
       gain.gain.value = 0;
       analyser.connect(gain);

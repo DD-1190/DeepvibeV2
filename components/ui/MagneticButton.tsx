@@ -12,10 +12,12 @@ type Props = {
   size?: 'sm' | 'lg';
   className?: string;
   onClick?: () => void;
+  /** Opens the project assistant instead of following the link (link stays as a no-JS fallback). */
+  openChat?: boolean | string;
 };
 
 /** Primary acid-lime pill CTA with magnetic pull, rolling label and swapping arrow. */
-export function MagneticButton({ href, children, size = 'lg', className, onClick }: Props) {
+export function MagneticButton({ href, children, size = 'lg', className, onClick, openChat }: Props) {
   const ref = useRef<HTMLAnchorElement>(null);
   useMagnetic(ref, size === 'lg' ? 0.28 : 0.2);
 
@@ -24,6 +26,7 @@ export function MagneticButton({ href, children, size = 'lg', className, onClick
       ref={ref}
       href={href}
       onClick={onClick}
+      data-open-chat={openChat ? (typeof openChat === 'string' ? openChat : '') : undefined}
       className={cn(
         'group relative inline-flex items-center justify-center gap-3 overflow-hidden rounded-full bg-lime font-display font-medium uppercase text-void',
         'shadow-[0_0_0_0_rgba(185,245,107,0)] transition-shadow duration-500 hover:shadow-[0_10px_40px_-8px_rgba(185,245,107,0.45)]',

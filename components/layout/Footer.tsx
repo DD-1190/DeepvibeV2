@@ -63,7 +63,7 @@ export function Footer() {
                 </li>
               ))}
               <li>
-                <a href="#contact" className="group inline-flex min-h-[2.25rem] items-center gap-1.5 text-warm/85 transition-colors hover:text-lime">
+                <a href="#contact" data-open-chat="" className="group inline-flex min-h-[2.25rem] items-center gap-1.5 text-warm/85 transition-colors hover:text-lime">
                   <RollText>Start a project</RollText>
                   <ArrowUpRight size={14} />
                 </a>

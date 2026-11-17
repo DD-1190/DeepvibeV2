@@ -108,7 +108,7 @@ export function Hero() {
           </p>
 
           <div data-hero-fade style={{ ['--i' as string]: 1 }} className="mt-9 flex flex-col items-stretch gap-4 sm:flex-row sm:items-center sm:gap-6 md:mt-11">
-            <MagneticButton href={hero.primaryCta.href}>{hero.primaryCta.label}</MagneticButton>
+            <MagneticButton href={hero.primaryCta.href} openChat>{hero.primaryCta.label}</MagneticButton>
             <a
               href={hero.secondaryCta.href}
               className="group inline-flex h-14 items-center justify-center gap-3 rounded-full border border-white/10 px-6 font-display text-[0.8125rem] font-medium uppercase tracking-[0.08em] text-warm transition-colors duration-500 hover:border-white/25 hover:bg-white/[0.04] sm:justify-start sm:border-transparent sm:px-2 sm:hover:border-transparent sm:hover:bg-transparent"

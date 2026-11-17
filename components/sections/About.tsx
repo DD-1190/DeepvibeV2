@@ -95,7 +95,7 @@ export function About() {
             </dl>
 
             <div data-reveal className="mt-12 flex flex-wrap items-center gap-6">
-              <MagneticButton href={about.cta.href}>{about.cta.label}</MagneticButton>
+              <MagneticButton href={about.cta.href} openChat>{about.cta.label}</MagneticButton>
               {about.linkedin && (
                 <a
                   href={about.linkedin}

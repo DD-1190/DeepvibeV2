@@ -98,7 +98,14 @@ export function FounderVideo() {
   }, []);
 
   return (
-    <figure className="relative h-full w-full">
+    <figure
+      className="relative h-full w-full"
+      data-cursor={hasVideo ? (playing ? 'pause' : 'play') : undefined}
+      onClick={(e) => {
+        if (!hasVideo || (e.target as Element).closest('button')) return;
+        togglePlay();
+      }}
+    >
       <div data-hero-media-inner className="absolute inset-0 will-change-transform">
         {!hasVideo && founderVideo.portrait && <FounderPortrait webp={founderVideo.portrait.webp} jpg={founderVideo.portrait.jpg} />}
         {!hasVideo && !founderVideo.portrait && <VideoPlaceholder />}

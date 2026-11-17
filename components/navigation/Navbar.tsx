@@ -89,7 +89,7 @@ export function Navbar() {
                 </li>
               ))}
               <li className="ml-3">
-                <MagneticButton href={site.cta.href} size="sm">
+                <MagneticButton href={site.cta.href} size="sm" openChat>
                   {site.cta.label}
                 </MagneticButton>
               </li>

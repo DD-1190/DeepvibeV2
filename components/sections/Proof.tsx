@@ -6,6 +6,7 @@ import { Quote } from 'lucide-react';
 import { proof, work } from '@/data/site';
 import { useSectionReveal } from '@/hooks/useSectionReveal';
 import { SectionHeader } from '@/components/ui/SectionHeader';
+import { DragMarquee } from '@/components/ui/DragMarquee';
 
 /** Verified outcomes = achieved (non-target) metrics from Selected Work. */
 const outcomes = work.projects.flatMap((p) =>
@@ -40,8 +41,6 @@ export function Proof() {
       });
     });
   });
-
-  const marquee = [...proof.experienceWith, ...proof.experienceWith];
 
   return (
     <section ref={root} id="proof" aria-labelledby="proof-title" className="relative scroll-mt-24 overflow-hidden py-24 md:py-28 lg:py-36">
@@ -113,13 +112,13 @@ export function Proof() {
         <div className="container-dv">
           <p className="label mb-6 text-muted">Experience designing for</p>
         </div>
-        <div className="group relative flex overflow-hidden border-y border-white/[0.08] py-8 [mask-image:linear-gradient(90deg,transparent,#000_10%,#000_90%,transparent)] md:py-10">
-          <ul className="flex shrink-0 animate-marquee items-center gap-16 pr-16 group-hover:[animation-play-state:paused] motion-reduce:animate-none md:gap-24 md:pr-24">
-            {marquee.map((c, i) => (
-              <li key={i} aria-hidden={i >= proof.experienceWith.length} className="flex shrink-0 items-center gap-16 md:gap-24">
+        <DragMarquee className="border-y border-white/[0.08] py-8 [mask-image:linear-gradient(90deg,transparent,#000_10%,#000_90%,transparent)] md:py-10">
+          <ul className="flex shrink-0 items-center gap-16 pr-16 md:gap-24 md:pr-24">
+            {proof.experienceWith.map((c, i) => (
+              <li key={i} className="flex shrink-0 items-center gap-16 md:gap-24">
                 {c.logo ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={c.logo} alt={c.name} className="h-8 w-auto opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0" />
+                  <img src={c.logo} alt={c.name} draggable={false} className="h-8 w-auto opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0" />
                 ) : (
                   <span className="font-display text-[2rem] font-medium tracking-[-0.04em] text-warm/40 transition-colors duration-500 hover:text-warm md:text-[2.75rem]">
                     {c.name}
@@ -129,7 +128,7 @@ export function Proof() {
               </li>
             ))}
           </ul>
-        </div>
+        </DragMarquee>
       </div>
     </section>
   );

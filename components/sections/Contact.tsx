@@ -6,7 +6,9 @@ import { contact } from '@/data/site';
 import { useSectionReveal } from '@/hooks/useSectionReveal';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { MagneticButton } from '@/components/ui/MagneticButton';
-import { EnquiryForm } from '@/components/contact/EnquiryForm';
+import { ArrowUp } from 'lucide-react';
+import { VibeMark } from '@/components/chat/VibeMark';
+import { PROJECT_TYPES } from '@/lib/chat/flow';
 
 export function Contact() {
   const root = useRef<HTMLElement>(null);
@@ -44,20 +46,57 @@ export function Contact() {
               {contact.sub}
             </p>
             <div data-reveal className="mt-10">
-              <MagneticButton
-                href="#enquiry"
-                onClick={() => {
-                  // focus the first field after the smooth scroll
-                  window.setTimeout(() => document.querySelector<HTMLInputElement>('#enquiry input[name="name"]')?.focus({ preventScroll: true }), 650);
-                }}
-              >
+              <MagneticButton href="#contact" openChat>
                 {contact.cta}
               </MagneticButton>
             </div>
           </div>
 
-          <div id="enquiry" data-reveal className="glass scroll-mt-28 rounded-[28px] border border-white/[0.08] p-6 sm:p-8 md:p-12 lg:col-span-7 lg:col-start-6">
-            <EnquiryForm />
+          {/* conversation starter — every answer opens the project assistant, pre-answered */}
+          <div data-reveal className="chat-panel relative overflow-hidden rounded-[30px] p-5 sm:p-7 md:p-9 lg:col-span-7 lg:col-start-6">
+            <span aria-hidden className="chat-sheen" />
+            <span aria-hidden className="chat-aurora" />
+            <div className="relative flex items-center gap-3.5">
+              <VibeMark size={42} />
+              <div className="min-w-0 flex-1">
+                <p className="font-display text-[1.375rem] font-medium leading-none tracking-[-0.03em] text-warm">
+                  Let&apos;s talk<span className="text-lime">.</span>
+                </p>
+                <p className="mt-1.5 text-[0.8125rem] text-muted">Your AI-powered project assistant.</p>
+              </div>
+              <span className="label hidden items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-2.5 py-1.5 text-[0.625rem] text-warm/80 sm:inline-flex">
+                <span className="chat-live" aria-hidden /> Online
+              </span>
+            </div>
+
+            <div className="relative mt-8 flex items-end gap-2.5">
+              <VibeMark size={26} />
+              <p className="chat-bubble-ai max-w-[34rem] rounded-[20px] rounded-bl-md px-4 py-3 text-[0.9375rem] leading-[1.55] text-warm/95 md:text-base">
+                Hey, welcome to DeepVibe. Tell me what you&apos;re building and I&apos;ll help shape the brief — it takes about two minutes.
+                <br />
+                <span className="mt-2 block text-warm">What are you looking to build?</span>
+              </p>
+            </div>
+
+            <div className="relative mt-4 flex flex-wrap gap-2 pl-[36px]" role="group" aria-label="Start with a project type">
+              {PROJECT_TYPES.map((t) => (
+                <button key={t} type="button" data-open-chat={t} className="chat-chip">
+                  {t}
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              data-open-chat=""
+              className="chat-composer relative mt-8 flex w-full items-center gap-2 rounded-[22px] p-1.5 pl-4 text-left md:mt-10"
+              aria-label="Describe your project to the assistant"
+            >
+              <span className="flex-1 py-2 text-[0.9375rem] text-muted/80">Or describe it in your own words…</span>
+              <span className="chat-send grid h-10 w-10 shrink-0 place-items-center rounded-full">
+                <ArrowUp size={18} strokeWidth={2.25} />
+              </span>
+            </button>
           </div>
         </div>
       </div>

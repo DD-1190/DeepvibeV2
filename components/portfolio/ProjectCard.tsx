@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
 import { ArrowUpRight } from 'lucide-react';
 import type { Project } from '@/data/site';
 import { cn } from '@/lib/cn';
@@ -11,60 +9,27 @@ type Props = { project: Project; index: number; className?: string };
 /**
  * Reusable portfolio card.
  * - masked image reveal + parallax are driven by the parent section (data-work-* hooks)
- * - desktop: a lime "view" bubble follows the cursor over the visual
+ * - desktop: the global CustomCursor turns into "VIEW ↗" over the visual (data-cursor="view")
  * - touch: a static arrow button replaces the bubble
  */
 export function ProjectCard({ project: p, index, className }: Props) {
-  const visualRef = useRef<HTMLAnchorElement>(null);
-  const bubbleRef = useRef<HTMLSpanElement>(null);
   const href = p.caseStudyHref ?? '#contact';
   const cta = p.caseStudyHref ? 'View case study' : 'Case study on request';
   const num = String(index + 1).padStart(2, '0');
   const large = p.size === 'large';
-
-  useEffect(() => {
-    const el = visualRef.current;
-    const bubble = bubbleRef.current;
-    if (!el || !bubble) return;
-    const ok =
-      window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
-      !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!ok) return;
-
-    gsap.set(bubble, { xPercent: -50, yPercent: -50, scale: 0 });
-    const xTo = gsap.quickTo(bubble, 'x', { duration: 0.55, ease: 'power3.out' });
-    const yTo = gsap.quickTo(bubble, 'y', { duration: 0.55, ease: 'power3.out' });
-    const move = (e: PointerEvent) => {
-      const r = el.getBoundingClientRect();
-      xTo(e.clientX - r.left);
-      yTo(e.clientY - r.top);
-    };
-    const enter = (e: PointerEvent) => {
-      const r = el.getBoundingClientRect();
-      gsap.set(bubble, { x: e.clientX - r.left, y: e.clientY - r.top });
-      gsap.to(bubble, { scale: 1, duration: 0.5, ease: 'expo.out' });
-    };
-    const leave = () => gsap.to(bubble, { scale: 0, duration: 0.4, ease: 'expo.out' });
-
-    el.addEventListener('pointermove', move);
-    el.addEventListener('pointerenter', enter);
-    el.addEventListener('pointerleave', leave);
-    return () => {
-      el.removeEventListener('pointermove', move);
-      el.removeEventListener('pointerenter', enter);
-      el.removeEventListener('pointerleave', leave);
-    };
-  }, []);
+  // no public case study yet → the link opens the project assistant with the request noted
+  const chat = p.caseStudyHref ? {} : { 'data-open-chat': '', 'data-chat-note': `Case study requested: ${p.name}` };
 
   return (
     <article id={`work-${p.slug}`} data-work-card className={cn('group/card scroll-mt-28', className)}>
       {/* visual */}
       <a
-        ref={visualRef}
         href={href}
         tabIndex={-1}
         aria-hidden
-        className="relative block overflow-hidden rounded-[22px] border border-white/[0.08] bg-graphite [@media(hover:hover)_and_(pointer:fine)]:cursor-none md:rounded-[28px]"
+        data-cursor="view"
+        {...chat}
+        className="relative block overflow-hidden rounded-[22px] border border-white/[0.08] bg-graphite md:rounded-[28px]"
       >
         <div data-work-mask className={cn('relative aspect-[4/3] w-full', large ? 'lg:aspect-[16/10]' : 'lg:aspect-[4/3]')}>
           <div data-work-parallax className="absolute inset-0 scale-[1.12] will-change-transform">
@@ -98,16 +63,6 @@ export function ProjectCard({ project: p, index, className }: Props) {
             </span>
           </div>
 
-          {/* cursor bubble (desktop) */}
-          <span
-            ref={bubbleRef}
-            aria-hidden
-            className="pointer-events-none absolute left-0 top-0 z-10 hidden h-32 w-32 scale-0 flex-col items-center justify-center gap-1.5 rounded-full bg-lime text-center text-void shadow-[0_20px_60px_-10px_rgba(185,245,107,0.5)] [@media(hover:hover)_and_(pointer:fine)]:flex"
-          >
-            <ArrowUpRight size={20} strokeWidth={2} />
-            <span className="label max-w-[11ch] leading-[1.25] tracking-[0.1em]">{cta}</span>
-          </span>
-
           {/* touch affordance */}
           <span
             aria-hidden
@@ -126,7 +81,7 @@ export function ProjectCard({ project: p, index, className }: Props) {
         <div className="min-w-0">
           <p className="label leading-relaxed text-muted">{p.category.join('  ·  ')}</p>
           <h3 className="mt-3 font-display text-[1.75rem] font-medium leading-[1.05] tracking-[-0.03em] text-warm md:text-[2.125rem]">
-            <a href={href} className="group/title relative inline-flex items-start gap-2 transition-colors duration-500 hover:text-lime">
+            <a href={href} {...chat} className="group/title relative inline-flex items-start gap-2 transition-colors duration-500 hover:text-lime">
               {p.name}
               <ArrowUpRight
                 aria-hidden

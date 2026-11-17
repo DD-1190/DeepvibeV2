@@ -88,7 +88,7 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
               transition={{ duration: 0.8, ease: EASE, delay: 0.5 }}
               className="mt-auto flex flex-col gap-6 pt-12"
             >
-              <MagneticButton href={site.cta.href} onClick={onClose} className="w-full justify-between">
+              <MagneticButton href={site.cta.href} onClick={onClose} openChat className="w-full justify-between">
                 {"Let's talk about your project"}
               </MagneticButton>
               <div className="flex items-end justify-between gap-4">
