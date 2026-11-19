@@ -76,7 +76,7 @@ export function Hero() {
 
       <div className="container-dv grid flex-1 grid-cols-1 items-center gap-14 md:gap-16 lg:grid-cols-12 lg:gap-10">
         {/* ── Copy ─────────────────────────────── */}
-        <div data-hero-copy className="relative z-10 lg:col-span-7 xl:col-span-7">
+        <div data-hero-copy className="relative z-10 lg:col-span-6">
           <p data-hero-eyebrow className="label mb-7 flex items-center gap-3 text-muted md:mb-9">
             <span className="relative flex h-2 w-2">
               <span className="absolute inset-0 animate-ping rounded-full bg-lime/60 motion-reduce:animate-none" />
@@ -87,7 +87,7 @@ export function Hero() {
 
           <h1
             id="hero-title"
-            className="max-w-[15ch] font-display text-display-xl font-medium md:text-[4.25rem] lg:text-display-xl text-warm [text-wrap:balance]"
+            className="max-w-[15ch] font-display text-display-xl font-medium text-warm [text-wrap:balance] md:text-[4.25rem] lg:text-[clamp(3.25rem,0.8rem+4.1vw,5.5rem)]"
           >
             {words.map((w, i) => (
               <span key={i} className="inline-block overflow-hidden pb-[0.1em] align-top -mb-[0.1em]">
@@ -131,7 +131,7 @@ export function Hero() {
         </div>
 
         {/* ── Founder film ─────────────────────── */}
-        <div className="relative mx-auto w-full max-w-[520px] lg:col-span-5 lg:mr-0 lg:max-w-[min(100%,calc((100svh-15rem)*0.8))]">
+        <div className="relative mx-auto w-full max-w-[520px] lg:col-span-6 lg:mr-0 lg:max-w-[min(100%,600px,calc((100svh-9.5rem)*0.8))]">
           <div data-hero-parallax className="relative">
             {/* layered depth: offset hairline frame + floor glow */}
             <div aria-hidden className="absolute -bottom-10 left-1/2 h-24 w-3/4 -translate-x-1/2 rounded-full bg-lime/20 blur-[60px]" />
