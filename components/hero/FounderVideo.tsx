@@ -7,8 +7,6 @@ import { cn } from '@/lib/cn';
 import { VideoPlaceholder } from './VideoPlaceholder';
 import { FounderPortrait } from './FounderPortrait';
 
-const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`;
-
 /**
  * Founder film — click to play, never autoplays.
  * - Poster frame first; nothing but metadata downloads until the visitor presses play
@@ -24,16 +22,9 @@ export function FounderVideo() {
   const [started, setStarted] = useState(false);
   const [muted, setMuted] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [duration, setDuration] = useState<number | null>(null);
 
   const src = founderVideo.mp4 || founderVideo.webm;
   const hasVideo = !!src && !failed;
-
-  // metadata may load before hydration attaches handlers
-  useEffect(() => {
-    const v = videoRef.current;
-    if (v && v.readyState >= 1 && v.duration) setDuration(v.duration);
-  }, [hasVideo]);
 
   // pause when scrolled away (never auto-resume)
   useEffect(() => {
@@ -86,7 +77,6 @@ export function FounderVideo() {
             playsInline
             preload="metadata"
             aria-label={`Video introduction from ${site.founder.name}, founder of DeepVibe`}
-            onLoadedMetadata={(e) => setDuration(e.currentTarget.duration || null)}
             onTimeUpdate={(e) => {
               const v = e.currentTarget;
               setProgress(v.duration ? v.currentTime / v.duration : 0);
@@ -129,7 +119,6 @@ export function FounderVideo() {
           </span>
           <span className="label text-[0.625rem] text-warm/90">
             {started ? 'Resume' : 'Play intro'}
-            {duration ? <span className="ml-2 text-muted">{fmt(duration)}</span> : null}
           </span>
         </button>
       )}
