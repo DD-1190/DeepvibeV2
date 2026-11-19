@@ -134,13 +134,12 @@ export function Hero() {
         <div className="relative mx-auto w-full max-w-[520px] lg:col-span-5 lg:mr-0 lg:max-w-[min(100%,calc((100svh-15rem)*0.8))]">
           <div data-hero-parallax className="relative">
             {/* layered depth: offset hairline frame + floor glow */}
-            <div aria-hidden className="absolute inset-0 translate-x-3 translate-y-3 rounded-[28px] border border-white/[0.07] md:translate-x-5 md:translate-y-5" />
             <div aria-hidden className="absolute -bottom-10 left-1/2 h-24 w-3/4 -translate-x-1/2 rounded-full bg-lime/20 blur-[60px]" />
 
             <div className="relative">
               <div
                 data-hero-media
-                className="relative isolate aspect-[4/5] w-full overflow-hidden rounded-[28px] border border-white/10 bg-graphite [-webkit-mask-image:-webkit-radial-gradient(white,black)] [transform:translateZ(0)]"
+                className="hero-media-blend relative isolate aspect-[4/5] w-full overflow-hidden rounded-[28px] bg-void [transform:translateZ(0)]"
               >
                 <FounderVideo />
               </div>

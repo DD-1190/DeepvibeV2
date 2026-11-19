@@ -43,6 +43,7 @@ with sync_playwright() as p:
         before=pg.evaluate("document.querySelector('video').paused"); pg.mouse.click(x,y); pg.wait_for_timeout(500)
         after=pg.evaluate("document.querySelector('video').paused"); s2=st(pg)
         rec('Clicking the film toggles playback and swaps icon', before!=after and s2!=s1, f'paused {before}->{after}, cursor {s1}->{s2}'); shot(pg,'video-'+s2,x,y)
+        if not pg.evaluate("document.querySelector('video').paused"): pg.mouse.click(x,y); pg.wait_for_timeout(400)
         bx,by=hover(pg,'[data-hero-media] button[aria-label*="founder video"]')
         rec('Play button inside the film → hover ring', st(pg)=='hover', st(pg))
     else:

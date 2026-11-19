@@ -51,11 +51,11 @@ export const hero = {
  */
 export const founderVideo = {
   webm: null as string | null,
-  mp4: null as string | null,
+  mp4: '/video/founder.mp4' as string | null,
   mobileWebm: null as string | null,
   mobileMp4: null as string | null,
   /** Poster frame — shown instantly, and used as the hero portrait until a video is added. */
-  poster: '/images/hero-portrait.jpg' as string | null,
+  poster: '/images/founder-poster.jpg' as string | null,
   /** Still portrait (WebP + JPG fallback) shown when no video source is set. */
   portrait: { webp: '/images/hero-portrait.webp', jpg: '/images/hero-portrait.jpg' } as { webp: string; jpg: string } | null,
   /** One-line subtitle shown over the film (optional). */
