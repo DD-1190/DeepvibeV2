@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { Fragment, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowDown } from 'lucide-react';
@@ -87,19 +87,22 @@ export function Hero() {
 
           <h1
             id="hero-title"
-            className="max-w-[15ch] font-display text-display-xl font-medium text-warm [text-wrap:balance] md:text-[4.25rem] lg:text-[clamp(3.25rem,0.8rem+4.1vw,5.5rem)]"
+            className="max-w-[15ch] font-display text-display-xl font-medium text-warm md:text-[4.25rem] lg:text-[clamp(3.25rem,0.8rem+4.1vw,5.5rem)]"
           >
             {words.map((w, i) => (
-              <span key={i} className="inline-block overflow-hidden pb-[0.1em] align-top -mb-[0.1em]">
-                <span
-                  data-hero-word
-                  style={{ ['--i' as string]: i }}
-                  className={cn('inline-block origin-bottom-left will-change-transform', isHighlight(w) && 'text-lime')}
-                >
-                  {w}
+              <Fragment key={i}>
+                {/* the space sits OUTSIDE the inline-block: Safari otherwise wraps it inside the word box */}
+                <span className="inline-block overflow-hidden whitespace-nowrap pb-[0.1em] align-top -mb-[0.1em]">
+                  <span
+                    data-hero-word
+                    style={{ ['--i' as string]: i }}
+                    className={cn('inline-block origin-bottom-left will-change-transform', isHighlight(w) && 'text-lime')}
+                  >
+                    {w}
+                  </span>
                 </span>
-                {i < words.length - 1 && ' '}
-              </span>
+                {i < words.length - 1 && ' '}
+              </Fragment>
             ))}
           </h1>
 
