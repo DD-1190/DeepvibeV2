@@ -24,7 +24,6 @@ export const metadata: Metadata = {
     siteName: site.name,
     title: 'DeepVibe — We design what comes next.',
     description: 'Strategy, design and technology for businesses ready to build what’s next.',
-    // TODO: add /public/images/og.jpg (1200×630) and reference it here.
   },
   twitter: {
     card: 'summary_large_image',
@@ -47,6 +46,8 @@ const jsonLd = {
   '@type': 'ProfessionalService',
   name: site.name,
   url: site.url,
+  logo: `${site.url}/icon-512.png`,
+  image: `${site.url}/icon-512.png`,
   description: site.description,
   slogan: site.tagline,
   founder: { '@type': 'Person', name: site.founder.name },
