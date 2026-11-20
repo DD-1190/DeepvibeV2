@@ -577,3 +577,13 @@ html.cursor-native body * { cursor: auto !important; }
 }
 .founder-play:hover { transform: translate(-50%, -50%) scale(1.04); }
 .founder-play:focus-visible { outline: 2px solid #b9f56b; outline-offset: 3px; }
+
+/* footer light arc — fades out on every edge so it melts into the section above */
+.footer-arc {
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 35%, #000 65%, transparent 100%),
+    linear-gradient(90deg, transparent 0%, #000 35%, #000 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(180deg, transparent 0%, #000 35%, #000 65%, transparent 100%),
+    linear-gradient(90deg, transparent 0%, #000 35%, #000 100%);
+  mask-composite: intersect;
+}

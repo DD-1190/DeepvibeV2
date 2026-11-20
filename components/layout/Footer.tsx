@@ -60,7 +60,7 @@ export function Footer() {
   return (
     <footer className="relative isolate overflow-hidden pt-36 md:pt-56">
       {/* light arc, top right */}
-      <svg aria-hidden className="pointer-events-none absolute -right-[6%] top-0 -z-10 h-[150px] w-[min(1100px,92vw)] md:h-[210px]" viewBox="0 0 1100 420" fill="none" preserveAspectRatio="none">
+      <svg aria-hidden className="footer-arc pointer-events-none absolute -right-[6%] top-0 -z-10 h-[150px] w-[min(1100px,92vw)] md:h-[210px]" viewBox="0 0 1100 420" fill="none" preserveAspectRatio="none">
         <defs>
           <linearGradient id="ft-arc" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0" stopColor="#B9F56B" stopOpacity="0" />
@@ -73,8 +73,8 @@ export function Footer() {
             <stop offset="0.6" stopColor="#B9F56B" stopOpacity="0.35" />
             <stop offset="1" stopColor="#B9F56B" stopOpacity="0" />
           </linearGradient>
-          <radialGradient id="ft-glow" cx="0.68" cy="0.22" r="0.5">
-            <stop offset="0" stopColor="#B9F56B" stopOpacity="0.16" />
+          <radialGradient id="ft-glow" cx="0.72" cy="0.55" r="0.42">
+            <stop offset="0" stopColor="#B9F56B" stopOpacity="0.12" />
             <stop offset="1" stopColor="#B9F56B" stopOpacity="0" />
           </radialGradient>
         </defs>
