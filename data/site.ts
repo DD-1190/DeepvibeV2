@@ -22,7 +22,7 @@ export const site = {
   /** TODO: add the real studio email, e.g. 'hello@…' */
   email: null as string | null,
   /** TODO: add real profiles, e.g. { label: 'LinkedIn', href: 'https://…' } */
-  socials: [] as SocialLink[],
+  socials: [{ label: 'LinkedIn', href: 'https://www.linkedin.com/company/deepvibe-studio' }] as SocialLink[],
   nav: [
     { label: 'Work', href: '#work' },
     { label: 'Services', href: '#services' },
