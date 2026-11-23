@@ -7,7 +7,7 @@ import { LOGO_DEEP, LOGO_VIBE, LOGO_VIEWBOX } from './logoPaths';
  */
 export function Logo({ className, onClick, height = 22 }: { className?: string; onClick?: () => void; height?: number }) {
   return (
-    <a href="#top" onClick={onClick} aria-label="DeepVibe — back to top" className={cn('logo group inline-flex items-center', className)}>
+    <a href="/#top" onClick={onClick} aria-label="DeepVibe — home" className={cn('logo group inline-flex items-center', className)}>
       <svg viewBox={LOGO_VIEWBOX} style={{ height }} className="w-auto overflow-visible" aria-hidden>
         <path className="logo-deep" fill="#E9EDE5" fillRule="evenodd" d={LOGO_DEEP} />
         <g className="logo-vibe">

@@ -11,17 +11,17 @@ const COLUMNS: { title: string; links: FooterLink[] }[] = [
   {
     title: 'Explore',
     links: [
-      { label: 'Work', href: '#work' },
-      { label: 'Capabilities', href: '#services' },
-      { label: 'Approach', href: '#philosophy' },
+      { label: 'Work', href: '/#work' },
+      { label: 'Capabilities', href: '/#services' },
+      { label: 'Approach', href: '/#philosophy' },
     ],
   },
   {
     title: 'Studio',
     links: [
-      { label: 'About', href: '#about' },
-      { label: 'Founder', href: '#top' },
-      { label: 'Clients', href: '#proof' },
+      { label: 'About', href: '/#about' },
+      { label: 'Founder', href: '/#top' },
+      { label: 'Insights', href: '/journal' },
     ],
   },
   {
@@ -29,7 +29,7 @@ const COLUMNS: { title: string; links: FooterLink[] }[] = [
     links: [
       ...site.socials.map((s) => ({ label: s.label, href: s.href, external: true })),
       ...(site.email ? [{ label: 'Email', href: `mailto:${site.email}`, external: true }] : []),
-      { label: 'Start a project', href: '#contact', chat: true },
+      { label: 'Start a project', href: '/#contact', chat: true },
     ],
   },
 ];

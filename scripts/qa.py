@@ -53,10 +53,10 @@ with sync_playwright() as p:
     rec('Navigation','Hides on scroll down, returns on scroll up', hidden!=back, f'{hidden} -> {back}')
     # nav links scroll to sections
     okn=[]
-    for href in ['#work','#services','#about','#contact']:
+    for href in ['/#work','/#services','/#about','/#contact']:
         pg.evaluate('scrollTo(0,0)'); pg.wait_for_timeout(300)
         pg.click(f'nav[aria-label=Primary] a[href="{href}"]'); pg.wait_for_timeout(1400)
-        top=pg.evaluate(f"document.querySelector('{href}').getBoundingClientRect().top")
+        top=pg.evaluate(f"document.querySelector('{href[1:]}').getBoundingClientRect().top")
         okn.append((href, abs(top)<160))
     rec('Navigation','Desktop nav links scroll to sections', all(o for _,o in okn), str(okn))
     # project assistant (chat)
@@ -105,7 +105,7 @@ with sync_playwright() as p:
     q.tap('button[aria-controls=mobile-menu]'); q.wait_for_timeout(900)
     opened=q.locator('#mobile-menu').count()==1; locked=q.evaluate("document.documentElement.style.overflow")=='hidden'
     q.keyboard.press('Escape'); q.wait_for_timeout(900); closed=q.locator('#mobile-menu').count()==0
-    q.tap('button[aria-controls=mobile-menu]'); q.wait_for_timeout(900); q.tap('#mobile-menu a[href="#about"]'); q.wait_for_timeout(1500)
+    q.tap('button[aria-controls=mobile-menu]'); q.wait_for_timeout(900); q.tap('#mobile-menu a[href="/#about"]'); q.wait_for_timeout(1500)
     at=q.evaluate("document.querySelector('#about').getBoundingClientRect().top")
     rec('Mobile menu','Opens, locks scroll, Esc closes, link navigates', opened and locked and closed and abs(at)<160, f'open={opened} lock={locked} esc={closed} aboutTop={round(at)}')
     c.close()

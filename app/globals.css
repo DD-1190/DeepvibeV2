@@ -496,7 +496,7 @@ html.cursor-native body * { cursor: auto !important; }
   border-radius: 9999px;
   background: #b9f56b;
   color: #0b0d0f;
-  font-family: var(--font-display, 'Space Grotesk'), sans-serif;
+  font-family: 'Space Grotesk Variable', system-ui, sans-serif;
   font-weight: 500;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -587,3 +587,26 @@ html.cursor-native body * { cursor: auto !important; }
     linear-gradient(90deg, transparent 0%, #000 35%, #000 100%);
   mask-composite: intersect;
 }
+
+/* ───────────────────────── Journal article body ───────────────────────── */
+.prose-dv { color: rgba(233, 237, 229, 0.86); font-size: 1.125rem; line-height: 1.75; }
+@media (min-width: 768px) { .prose-dv { font-size: 1.1875rem; } }
+.prose-dv > * + * { margin-top: 1.35em; }
+.prose-dv h2 {
+  margin-top: 2.6em;
+  font-family: 'Space Grotesk Variable', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: #e9ede5;
+}
+.prose-dv h2 + * { margin-top: 0.9em; }
+.prose-dv a { color: #e9ede5; text-decoration: underline; text-decoration-color: rgba(185, 245, 107, 0.55); text-underline-offset: 4px; text-decoration-thickness: 1px; transition: color 0.3s, text-decoration-color 0.3s; }
+.prose-dv a:hover { color: #b9f56b; text-decoration-color: #b9f56b; }
+.prose-dv strong { color: #e9ede5; font-weight: 600; }
+.prose-dv em { color: #e9ede5; }
+.prose-dv ul { padding-left: 0; list-style: none; }
+.prose-dv ul > li { position: relative; padding-left: 1.5em; }
+.prose-dv ul > li + li { margin-top: 0.6em; }
+.prose-dv ul > li::before { content: ''; position: absolute; left: 0.2em; top: 0.72em; width: 6px; height: 6px; border-radius: 9999px; background: #b9f56b; }

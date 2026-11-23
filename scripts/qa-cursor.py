@@ -31,9 +31,9 @@ with sync_playwright() as p:
     rec('Ring catches up', abs(r[1]-300)<=2 and abs(r[2]-300)<=2, f'{r[1:]}')
     pg.mouse.move(700,500); pg.wait_for_timeout(700)
     rec('Default ring 38px', st(pg)=='default' and ring(pg)[0]==38, f'{st(pg)} {ring(pg)[0]}px')
-    x,y=hover(pg,'nav[aria-label=Primary] a[href="#services"]'); 
+    x,y=hover(pg,'nav[aria-label=Primary] a[href="/#services"]'); 
     rec('Nav link → hover ring 54px', st(pg)=='hover' and ring(pg)[0]==54, f'{st(pg)} {ring(pg)[0]}px'); shot(pg,'hover',x,y)
-    x,y=hover(pg,'nav[aria-label=Primary] a[href="#contact"].bg-lime, nav[aria-label=Primary] li:last-child a')
+    x,y=hover(pg,'nav[aria-label=Primary] a[href="/#contact"].bg-lime, nav[aria-label=Primary] li:last-child a')
     rec("Lime CTA ('Let's Talk') → hover", st(pg)=='hover', st(pg)); shot(pg,'cta',x,y)
     x,y=hover(pg,'#hero-title'); rec('Plain heading → default', st(pg)=='default', st(pg))
     # video (only when a founder video is configured)

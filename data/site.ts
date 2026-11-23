@@ -24,12 +24,13 @@ export const site = {
   /** TODO: add real profiles, e.g. { label: 'LinkedIn', href: 'https://…' } */
   socials: [{ label: 'LinkedIn', href: 'https://www.linkedin.com/company/deepvibe-studio' }] as SocialLink[],
   nav: [
-    { label: 'Work', href: '#work' },
-    { label: 'Services', href: '#services' },
-    { label: 'About', href: '#about' },
-    { label: 'Contact', href: '#contact' },
+    { label: 'Work', href: '/#work' },
+    { label: 'Services', href: '/#services' },
+    { label: 'About', href: '/#about' },
+    { label: 'Journal', href: '/journal' },
+    { label: 'Contact', href: '/#contact' },
   ] satisfies NavItem[],
-  cta: { label: "Let's Talk", href: '#contact' },
+  cta: { label: "Let's Talk", href: '/#contact' },
 };
 
 export const hero = {
