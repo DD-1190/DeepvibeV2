@@ -14,6 +14,8 @@ export type Post = {
   author: string;
   /** Feature image: base path without size/extension, e.g. /images/journal/x → x-900.webp, x-1536.webp, x-og.jpg */
   image?: { base: string; alt: string; width: number; height: number };
+  /** Optional film shown instead of the feature image on the article page */
+  video?: { src: string; poster: string; width: number; height: number; title: string };
   sources: Source[];
 };
 
@@ -31,6 +33,13 @@ export const posts: Post[] = [
       alt: 'Paper collage on a blue background: two young people laugh together over a phone, surrounded by paper fragments of an envelope with a photo, a social post and a vertical video, while a person wearing glasses looks on, all linked by a hand-drawn line.',
       width: 1536,
       height: 1024,
+    },
+    video: {
+      src: '/video/journal/the-habit-comes-first.mp4',
+      poster: '/images/journal/the-habit-comes-first-film.jpg',
+      width: 1280,
+      height: 720,
+      title: 'The Habit Comes First — a 48-second film with voiceover',
     },
     sources: [
       { title: 'NPR — Ray Tomlinson, inventor of modern email, dies (2016)', href: 'https://www.npr.org/2016/03/06/469428062/ray-tomlinson-inventor-of-modern-email-has', note: '1971 person-to-person network email on the ARPANET, a US government network.' },

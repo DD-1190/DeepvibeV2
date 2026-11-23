@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { Navbar } from '@/components/navigation/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { MagneticButton } from '@/components/ui/MagneticButton';
+import { ArticleVideo } from '@/components/journal/ArticleVideo';
 import { site } from '@/data/site';
 import { formatDate, getPost, posts, renderPost } from '@/lib/journal';
 
@@ -93,24 +94,32 @@ export default async function PostPage({ params }: Params) {
             </div>
           </header>
 
-          {post.image && (
+          {post.video ? (
             <figure className="container-dv pb-16 md:pb-24">
-              <div className="mx-auto max-w-[68rem] overflow-hidden rounded-[28px] border border-white/[0.08] bg-surface">
-                <picture>
-                  <source type="image/webp" srcSet={`${post.image.base}-900.webp 900w, ${post.image.base}-1536.webp 1536w`} sizes="(min-width: 1120px) 1088px, 100vw" />
-                  <img
-                    src={`${post.image.base}-1536.jpg`}
-                    srcSet={`${post.image.base}-900.jpg 900w, ${post.image.base}-1536.jpg 1536w`}
-                    sizes="(min-width: 1120px) 1088px, 100vw"
-                    alt={post.image.alt}
-                    width={post.image.width}
-                    height={post.image.height}
-                    fetchPriority="high"
-                    className="block h-auto w-full"
-                  />
-                </picture>
+              <div className="mx-auto max-w-[68rem]">
+                <ArticleVideo {...post.video} />
               </div>
             </figure>
+          ) : (
+            post.image && (
+              <figure className="container-dv pb-16 md:pb-24">
+                <div className="mx-auto max-w-[68rem] overflow-hidden rounded-[28px] border border-white/[0.08] bg-surface">
+                  <picture>
+                    <source type="image/webp" srcSet={`${post.image.base}-900.webp 900w, ${post.image.base}-1536.webp 1536w`} sizes="(min-width: 1120px) 1088px, 100vw" />
+                    <img
+                      src={`${post.image.base}-1536.jpg`}
+                      srcSet={`${post.image.base}-900.jpg 900w, ${post.image.base}-1536.jpg 1536w`}
+                      sizes="(min-width: 1120px) 1088px, 100vw"
+                      alt={post.image.alt}
+                      width={post.image.width}
+                      height={post.image.height}
+                      fetchPriority="high"
+                      className="block h-auto w-full"
+                    />
+                  </picture>
+                </div>
+              </figure>
+            )
           )}
 
           <div className="container-dv">
