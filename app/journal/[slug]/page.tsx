@@ -22,8 +22,15 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     description: post.dek,
     alternates: { canonical: `/journal/${post.slug}` },
     authors: [{ name: post.author }],
-    openGraph: { type: 'article', title: post.title, description: post.dek, publishedTime: post.date, authors: [post.author] },
-    twitter: { card: 'summary_large_image', title: post.title, description: post.dek },
+    openGraph: {
+      type: 'article',
+      title: post.title,
+      description: post.dek,
+      publishedTime: post.date,
+      authors: [post.author],
+      ...(post.image ? { images: [{ url: `${post.image.base}-og.jpg`, width: 1200, height: 630, alt: post.image.alt }] } : {}),
+    },
+    twitter: { card: 'summary_large_image', title: post.title, description: post.dek, ...(post.image ? { images: [`${post.image.base}-og.jpg`] } : {}) },
   };
 }
 
@@ -48,6 +55,7 @@ export default async function PostPage({ params }: Params) {
     '@type': 'Article',
     headline: post.title,
     description: post.dek,
+    ...(post.image ? { image: `${site.url}${post.image.base}-1536.jpg` } : {}),
     datePublished: post.date,
     author: { '@type': 'Person', name: post.author },
     publisher: { '@type': 'Organization', name: site.name, logo: { '@type': 'ImageObject', url: `${site.url}/icon-512.png` } },
@@ -84,6 +92,26 @@ export default async function PostPage({ params }: Params) {
               </p>
             </div>
           </header>
+
+          {post.image && (
+            <figure className="container-dv pb-16 md:pb-24">
+              <div className="mx-auto max-w-[68rem] overflow-hidden rounded-[28px] border border-white/[0.08] bg-surface">
+                <picture>
+                  <source type="image/webp" srcSet={`${post.image.base}-900.webp 900w, ${post.image.base}-1536.webp 1536w`} sizes="(min-width: 1120px) 1088px, 100vw" />
+                  <img
+                    src={`${post.image.base}-1536.jpg`}
+                    srcSet={`${post.image.base}-900.jpg 900w, ${post.image.base}-1536.jpg 1536w`}
+                    sizes="(min-width: 1120px) 1088px, 100vw"
+                    alt={post.image.alt}
+                    width={post.image.width}
+                    height={post.image.height}
+                    fetchPriority="high"
+                    className="block h-auto w-full"
+                  />
+                </picture>
+              </div>
+            </figure>
+          )}
 
           <div className="container-dv">
             <div className="prose-dv mx-auto max-w-[44rem]" dangerouslySetInnerHTML={{ __html: html }} />

@@ -12,6 +12,8 @@ export type Post = {
   date: string;
   topics: string[];
   author: string;
+  /** Feature image: base path without size/extension, e.g. /images/journal/x → x-900.webp, x-1536.webp, x-og.jpg */
+  image?: { base: string; alt: string; width: number; height: number };
   sources: Source[];
 };
 
@@ -24,6 +26,12 @@ export const posts: Post[] = [
     date: '2026-11-23',
     topics: ['Consumer AI', 'Product thinking'],
     author: 'Naman Rampal',
+    image: {
+      base: '/images/journal/the-habit-comes-first',
+      alt: 'Paper collage on a blue background: two young people laugh together over a phone, surrounded by paper fragments of an envelope with a photo, a social post and a vertical video, while a person wearing glasses looks on, all linked by a hand-drawn line.',
+      width: 1536,
+      height: 1024,
+    },
     sources: [
       { title: 'NPR — Ray Tomlinson, inventor of modern email, dies (2016)', href: 'https://www.npr.org/2016/03/06/469428062/ray-tomlinson-inventor-of-modern-email-has', note: '1971 person-to-person network email on the ARPANET, a US government network.' },
       { title: 'Internet Hall of Fame — Ray Tomlinson', href: 'https://www.internethalloffame.org/?p=76', note: 'The @ sign separating user from host.' },

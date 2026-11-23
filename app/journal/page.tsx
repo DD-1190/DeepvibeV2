@@ -41,6 +41,21 @@ export default function JournalPage() {
                       <span>{minutes} min read</span>
                     </div>
                     <div className="md:col-span-8">
+                      {p.image && (
+                        <div className="mb-8 overflow-hidden rounded-[22px] border border-white/[0.08] bg-surface">
+                          <picture>
+                            <source type="image/webp" srcSet={`${p.image.base}-900.webp 900w, ${p.image.base}-1536.webp 1536w`} sizes="(min-width: 768px) 66vw, 100vw" />
+                            <img
+                              src={`${p.image.base}-900.jpg`}
+                              alt=""
+                              width={p.image.width}
+                              height={p.image.height}
+                              loading="lazy"
+                              className="block h-auto w-full transition-transform duration-700 ease-expo group-hover:scale-[1.02]"
+                            />
+                          </picture>
+                        </div>
+                      )}
                       <p className="label mb-4 text-lime/90">{p.topics.join(' · ')}</p>
                       <h2 className="font-display text-[clamp(1.6rem,3vw,2.5rem)] font-medium leading-[1.08] tracking-[-0.03em] text-warm transition-colors duration-300 group-hover:text-lime">
                         {p.title}
